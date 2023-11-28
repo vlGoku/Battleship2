@@ -37,48 +37,38 @@ class Gameboard {
     const cruiser = new Ship("cruiser", 3, 3);
     const submarine = new Ship("submarine", 3, 2);
     const destroyer = new Ship("Destroyer", 2, 1);
+    this.ships.push(carrier, battleship, cruiser, submarine, destroyer);
   }
 
-  placeShipCPU(ship) {
-    let x = parseInt(Math.random() * 10);
-    let y = parseInt(Math.random() * 10);
-    if (this.gameboard[x][y] === this.gameboard[0][0]) {
-      this.placeShip(ship, x, y);
-    } else {
+  placeShipsCPU() {
+    for (const ship of this.ships) {
       this.placeShipCPU(ship);
     }
   }
 
-  placeShipCPULoop() {
-    for (let i = 1; i < this.ships.length; i++) {
-      this.placeShipCPU(this.ships[i]);
+  placeShipCPU(ship) {
+    let placed = false;
+    while (!placed) {
+      let x = Math.floor(Math.random() * 10);
+      let y = Math.floor(Math.random() * 10);
+      if (this.hasEnoughSpace(ship, x, y)) {
+        this.placeShip(ship, x, y);
+        placed = true;
+      }
     }
   }
 
-  attackShip(x, y) {
-    const currentItem = this.gameboard[x][y];
-    this.ships.forEach((ship) => {
-      if (ship.shipNumber === currentItem) {
-        ship.timesHit++;
-        this.gameboard[x][y] = "Treffer";
-        this.checkShipSunk();
-      }
-    });
-    if (this.gameboard[x][y] === 0) {
-      this.gameboard[x][y] = "X";
+  hasEnoughSpace(ship, x, y) {
+    const shipLength = ship.shipLength();
+    if (x + shipLength > 10) {
+      return false;
     }
-    this.counter++;
-  }
-
-  checkShipSunk() {
-    this.ships.forEach((ship) => {
-      if (ship.timesHit === ship.shipLength()) {
-        ship.isSunk = true;
+    for (let i = 0; i < shipLength; i++) {
+      if (this.gameboard[x + i][y] !== 0) {
+        return false;
       }
-      if (ship.isSunk) {
-        console.log("Du hast " + ship.name + " zum sinken gebracht");
-      }
-    });
+    }
+    return true;
   }
 
   checkIfShipIsThere() {
