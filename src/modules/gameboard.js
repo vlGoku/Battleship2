@@ -20,15 +20,19 @@ class Gameboard {
   }
   placeShip(ship, x, y) {
     let z = 1;
-    for (let i = 0; i < ship.shipLength(); i++) {
-      if ([x + i] > 9) {
-        this.gameboard[x - z][y] = ship.shipNumber;
-        z++;
-      } else {
-        this.gameboard[x + i][y] = ship.shipNumber;
+    if (this.gameboard[x][y] !== 0) {
+      console.log("Hallo, hier ist ein Schiff! Platziere es bitte wo anders");
+    } else {
+      for (let i = 0; i < ship.shipLength(); i++) {
+        if ([x + i] > 9) {
+          this.gameboard[x - z][y] = ship.shipNumber;
+          z++;
+        } else {
+          this.gameboard[x + i][y] = ship.shipNumber;
+        }
       }
+      this.ships.push(ship);
     }
-    this.ships.push(ship);
   }
 
   createShipsCPU() {
@@ -42,38 +46,17 @@ class Gameboard {
 
   placeShipsCPU() {
     for (const ship of this.ships) {
-      this.placeShipCPU(ship);
-    }
-  }
-
-  placeShipCPU(ship) {
-    let placed = false;
-    while (!placed) {
       let x = Math.floor(Math.random() * 10);
       let y = Math.floor(Math.random() * 10);
-      if (this.hasEnoughSpace(ship, x, y)) {
-        this.placeShip(ship, x, y);
-        placed = true;
+      let z = 1;
+      for (let i = 0; i < ship.shipLength(); i++) {
+        if ([x + i] > 9) {
+          this.gameboard[x - z][y] = ship.shipNumber;
+          z++;
+        } else {
+          this.gameboard[x + i][y] = ship.shipNumber;
+        }
       }
-    }
-  }
-
-  hasEnoughSpace(ship, x, y) {
-    const shipLength = ship.shipLength();
-    if (x + shipLength > 10) {
-      return false;
-    }
-    for (let i = 0; i < shipLength; i++) {
-      if (this.gameboard[x + i][y] !== 0) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  checkIfShipIsThere() {
-    if (this.gameboard[x][y] != ship.shipNumber) {
-      this.placeShip(ship, x, y);
     }
   }
 }
