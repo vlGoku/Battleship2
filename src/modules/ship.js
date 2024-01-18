@@ -3,35 +3,21 @@
 import { Gameboard } from "./gameboard";
 
 class Ship {
-  constructor(name, length, number) {
+  constructor(name, length, number, ships) {
     this.name = name;
     this.length = length;
     this.shipNumber = number;
     this.isSunk = false;
     this.timesHit = 0;
+    this.ships = this.ships;
   }
 
-  shipLength(){
+  shipLength() {
     return this.length;
   }
 
   hit() {
     return this.timesHit;
-  }
-
-  attackShip(x, y) {
-    const currentItem = this.gameboard[x][y];
-    this.ships.forEach((ship) => {
-      if (ship.shipNumber === currentItem) {
-        ship.timesHit++;
-        this.gameboard[x][y] = "Treffer";
-        this.checkShipSunk();
-      }
-    });
-    if (this.gameboard[x][y] === 0) {
-      this.gameboard[x][y] = "X";
-    }
-    this.counter++;
   }
 
   checkShipSunk() {
