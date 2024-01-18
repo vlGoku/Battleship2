@@ -18,6 +18,7 @@ class Gameboard {
       }
     }
   }
+
   placeShip(ship, x, y) {
     let z = 1;
     if (this.gameboard[x][y] !== 0) {
@@ -36,27 +37,62 @@ class Gameboard {
   }
 
   createShipsCPU() {
-    const carrier = new Ship("carrier", 5, 5);
-    const battleship = new Ship("battleship", 4, 4);
-    const cruiser = new Ship("cruiser", 3, 3);
-    const submarine = new Ship("submarine", 3, 2);
-    const destroyer = new Ship("Destroyer", 2, 1);
+    const carrier = new Ship("carrier", 5, 5, this.ships);
+    const battleship = new Ship("battleship", 4, 4, this.ships);
+    const cruiser = new Ship("cruiser", 3, 3, this.ships);
+    const submarine = new Ship("submarine", 3, 2, this.ships);
+    const destroyer = new Ship("Destroyer", 2, 1, this.ships);
     this.ships.push(carrier, battleship, cruiser, submarine, destroyer);
   }
 
   placeShipsCPU() {
     for (const ship of this.ships) {
-      let x = Math.floor(Math.random() * 10);
-      let y = Math.floor(Math.random() * 10);
-      let z = 1;
+      let x, y, z;
+
+      do {
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+        z = 1;
+      } while (!this.isPlacementValid(x, y, ship));
+
       for (let i = 0; i < ship.shipLength(); i++) {
-        if ([x + i] > 9) {
+        if (x + i > 9) {
           this.gameboard[x - z][y] = ship.shipNumber;
           z++;
         } else {
           this.gameboard[x + i][y] = ship.shipNumber;
         }
       }
+    }
+  }
+
+  isPlacementValid(x, y, ship) {
+    for (let i = 0; i < ship.shipLength(); i++) {
+      if (x + i > 9 || this.gameboard[x + i][y] !== 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  attackShip(x, y) {
+    const currentItem = this.gameboard[x][y];
+    const ship = this.ships.find((ship) => ship.shipNumber === currentItem);
+    if (ship) {
+      ship.timesHit++;
+      this.gameboard[x][y] = "Treffer";
+      if (ship.timesHit === ship.shipLength()) {
+        ship.isSunk = true;
+        console.log(`Du hast ${ship.name} versenkt!`);
+        return "Versenkt";
+      } else {
+        console.log("Treffer!");
+        return "Treffer";
+      }
+    } else {
+      console.log("Verfehlt!");
+      this.gameboard[x][y] = "X";
+      return "Verfehlt";
     }
   }
 }
