@@ -4,6 +4,7 @@ import { Player } from "./modules/player";
 import { Ship } from "./modules/ship";
 
 let gameboardPlayer = new Gameboard();
+let player = new Player("Marko");
 let gameboardKI = new Gameboard();
 
 gameboardPlayer.createGameboard();
@@ -18,5 +19,6 @@ const destroyer = new Ship("Destroyer", 2, 1);
 
 gameboardKI.placeShipsCPU();
 
+console.log(player.attackEnemy(3, 4));
 console.log(gameboardPlayer.gameboard);
 console.log(gameboardKI.gameboard);
